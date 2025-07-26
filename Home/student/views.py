@@ -132,12 +132,11 @@ def edit_student(request, slug):
     }
     return render(request, "students/edit-student.html", context)
 
-def view_student(request, slug):
-    student = get_object_or_404(Student, student_id = slug)
-    context = {
-        'student': student
-    }
+def view_student(request, student_id):
+    student = get_object_or_404(Student, student_id=student_id)
+    context = {'student': student}
     return render(request, "students/student-details.html", context)
+
 
 def student_list(request):
     student_list = Student.objects.select_related('parent').all()
@@ -161,4 +160,3 @@ def delete_student(request, slug):
         "student": student
     }
     return render(request, "students/confirm-delete.html", context)
-
