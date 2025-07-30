@@ -56,8 +56,8 @@ def add_student(request):
     return render(request, "students/add-student.html")
 
 
-def edit_student(request, slug):
-    student = get_object_or_404(Student, student_id=slug)
+def edit_student(request, student_id):
+    student = get_object_or_404(Student, student_id=student_id)
     parent = student.parent
 
     if request.method == "POST":
@@ -126,10 +126,7 @@ def edit_student(request, slug):
         messages.success(request, "Student and parent info updated successfully!")
         return redirect("student_list")
 
-    context = {
-        "student": student,
-        "parent": parent
-    }
+    context = {"student": student, "parent": parent}
     return render(request, "students/edit-student.html", context)
 
 def view_student(request, student_id):
@@ -148,15 +145,12 @@ def student_list(request):
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib import messages
 
-def delete_student(request, slug):
-    student = get_object_or_404(Student, student_id=slug)
-    
+def delete_student(request, student_id):
+    student = get_object_or_404(Student, student_id=student_id)
+
     if request.method == "POST":
-        student.delete()  # This will also delete the parent if you have on_delete=models.CASCADE set
+        student.delete()
         messages.success(request, "Student record deleted successfully.")
         return redirect("student_list")
 
-    context = {
-        "student": student
-    }
-    return render(request, "students/confirm-delete.html", context)
+    return redirect("student_list")  # handles GET requests safely
