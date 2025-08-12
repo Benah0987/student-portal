@@ -1,8 +1,4 @@
-from django.shortcuts import render
-
-# Create your views here.
-def signup_view(request):
-    if request.methosfrom django.shortcuts import render, redirect
+from django.shortcuts import render, redirect
 from django.contrib.auth import authenticate, login, logout
 from .models import CustomUser, PasswordResetRequest
 from django.utils import timezone
