@@ -9,18 +9,42 @@ def student_list(request):
 
 def add_student(request):
     if request.method == "POST":
-        # get all fields as you already do...
-        # (keep your current code here...)
+        # Get POST data
+        first_name = request.POST.get("first_name", "").strip()
+        last_name = request.POST.get("last_name", "").strip()
+        student_id = request.POST.get("student_id", "").strip()
+        gender = request.POST.get("gender", "").strip()
+        date_of_birth = request.POST.get("dob", "").strip()  # your form used 'dob'
+        student_class = request.POST.get("class", "").strip()  # form key probably 'class'
+        religion = request.POST.get("religion", "").strip()
+        joining_date = request.POST.get("joining_date", "").strip()
+        mobile_number = request.POST.get("mobile_number", "").strip()
+        admission_number = request.POST.get("admission_number", "").strip()
+        section = request.POST.get("section", "").strip()
+        student_image = request.FILES.get("student_image")
 
-        # Check for duplicate
+        # Parent info
+        father_name = request.POST.get("father_name", "").strip()
+        father_occupation = request.POST.get("father_occupation", "").strip()
+        father_mobile = request.POST.get("father_mobile", "").strip()
+        father_email = request.POST.get("father_email", "").strip()
+        mother_name = request.POST.get("mother_name", "").strip()
+        mother_mobile = request.POST.get("mother_mobile", "").strip()
+        mother_email = request.POST.get("mother_email", "").strip()
+        present_address = request.POST.get("present_address", "").strip()
+        permanent_address = request.POST.get("permanent_address", "").strip()
+
+        # Basic validation
+        if not first_name or not last_name or not student_id:
+            messages.error(request, "Please fill in all required fields (first name, last name, student ID).")
+            return render(request, "students/add-student.html")
+
+        # Duplicate check
         if Student.objects.filter(student_id=student_id).exists():
             messages.error(request, f"A student with ID {student_id} already exists.")
             return render(request, "students/add-student.html")
 
-        if not first_name or not last_name or not student_id:
-            messages.error(request, "Please fill in all required fields.")
-            return render(request, "students/add-student.html")
-
+        # Create parent record
         parent = Parent.objects.create(
             father_name=father_name,
             father_occupation=father_occupation,
@@ -33,7 +57,8 @@ def add_student(request):
             permanent_address=permanent_address
         )
 
-        student = Student(
+        # Create student record
+        student = Student.objects.create(
             first_name=first_name,
             last_name=last_name,
             student_id=student_id,
@@ -48,11 +73,11 @@ def add_student(request):
             student_image=student_image,
             parent=parent
         )
-        student.save()
 
         messages.success(request, "Student and parent info saved successfully!")
         return redirect('student_list')
 
+    # GET
     return render(request, "students/add-student.html")
 
 
