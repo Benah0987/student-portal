@@ -56,33 +56,24 @@ def login_view(request):
             messages.error(request, "Please provide both email and password.")
             return render(request, 'authentication/login.html')
 
-        # try authenticate using email keyword (works only if you have an email backend)
-        user = authenticate(request, email=email, password=password)
-        if user is not None:
-            login(request, user)
-            messages.success(request, "Login successful (via email backend).")
-            return _redirect_by_role(request, user)
-
-        # fallback: find user by email then authenticate with username
         try:
             found = User.objects.get(email__iexact=email)
         except User.DoesNotExist:
-            found = None
+            messages.error(request, "No account found with that email.")
+            return render(request, 'authentication/login.html')
 
-        if found:
-            user = authenticate(request, username=found.get_username(), password=password)
-            if user is not None:
-                login(request, user)
-                messages.success(request, "Login successful (via username auth).")
-                return _redirect_by_role(request, user)
-            else:
-                messages.error(request, "Invalid credentials — check your password.")
-                return render(request, 'authentication/login.html')
+        user = authenticate(request, username=found.username, password=password)
+        if user is not None:
+            login(request, user)
+            messages.success(request, "Login successful ✅")
+            return _redirect_by_role(request, user)
 
-        messages.error(request, "No account found with that email.")
+        messages.error(request, "Invalid credentials — check your password.")
         return render(request, 'authentication/login.html')
 
     return render(request, 'authentication/login.html')
+
+
 
 
 def _redirect_by_role(request, user):
