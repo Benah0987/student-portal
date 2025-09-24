@@ -40,55 +40,30 @@ def signup_view(request):
     return render(request, 'authentication/register.html')  # Render signup template
 
 
-from django.shortcuts import render, redirect
-from django.contrib.auth import authenticate, login
-from django.contrib import messages
-from django.contrib.auth import get_user_model
-
-User = get_user_model()
-
 def login_view(request):
     if request.method == 'POST':
-        email = request.POST.get('email', '').strip()
-        password = request.POST.get('password', '')
-
-        if not email or not password:
-            messages.error(request, "Please provide both email and password.")
-            return render(request, 'authentication/login.html')
-
-        try:
-            found = User.objects.get(email__iexact=email)
-        except User.DoesNotExist:
-            messages.error(request, "No account found with that email.")
-            return render(request, 'authentication/login.html')
-
-        user = authenticate(request, username=found.username, password=password)
+        email = request.POST['email']
+        password = request.POST['password']
+        
+        user = authenticate(request, username=email, password=password)
         if user is not None:
             login(request, user)
-            messages.success(request, "Login successful ✅")
-            return _redirect_by_role(request, user)
-
-        messages.error(request, "Invalid credentials — check your password.")
-        return render(request, 'authentication/login.html')
-
-    return render(request, 'authentication/login.html')
-
-
-
-
-def _redirect_by_role(request, user):
-    """Helper that redirects a logged-in user based on role."""
-    if getattr(user, 'is_admin', False):
-        return redirect('admin_dashboard')
-    elif getattr(user, 'is_teacher', False):
-        return redirect('teacher_dashboard')
-    elif getattr(user, 'is_student', False):
-        return redirect('dashboard')
-    else:
-        # use messages here since we have request available
-        messages.error(request, "Invalid user role.")
-        return redirect('index')
-
+            messages.success(request, 'Login successful!')
+            
+            # Redirect user based on their role
+            if user.is_admin:
+                return redirect('admin_dashboard')
+            elif user.is_teacher:
+                return redirect('teacher_dashboard')
+            elif user.is_student:
+                return redirect('dashboard')
+            else:
+                messages.error(request, 'Invalid user role')
+                return redirect('index')  # Redirect to index in case of error
+            
+        else:
+            messages.error(request, 'Invalid credentials')
+    return render(request, 'authentication/login.html')  # Render login template
 
 
 def forgot_password_view(request):
