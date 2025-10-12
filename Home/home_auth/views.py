@@ -7,50 +7,56 @@ from django.core.mail import send_mail
 from django.conf import settings
 from django.utils.crypto import get_random_string
 
-
 def signup_view(request):
     if request.method == 'POST':
         first_name = request.POST['first_name']
         last_name = request.POST['last_name']
         email = request.POST['email']
         password = request.POST['password']
-        role = request.POST.get('role')  # Get role from the form (student, teacher, or admin)
-        
-        # Create the user
+        role = request.POST.get('role')  # 'student', 'teacher', or 'admin'
+
+        # ✅ Use email for creation (no username field anymore)
         user = CustomUser.objects.create_user(
-            username=email,
             email=email,
+            password=password,
             first_name=first_name,
             last_name=last_name,
-            password=password,
         )
-        
-        # Assign the appropriate role
-        if role == 'student':
-            user.is_student = True
-        elif role == 'teacher':
-            user.is_teacher = True
-        elif role == 'admin':
-            user.is_admin = True
 
-        user.save()  # Save the user with the assigned role
-        login(request, user)
-        messages.success(request, 'Signup successful!')
-        return redirect('index')  # Redirect to the index or home page
-    return render(request, 'authentication/register.html')  # Render signup template
+        # Assign roles
+        user.is_student = role == 'student'
+        user.is_teacher = role == 'teacher'
+        user.is_admin = role == 'admin'
+        user.save()
+
+        messages.success(request, 'Signup successful! You can now log in.')
+        return redirect('login')
+
+    return render(request, 'authentication/register.html')
 
 
 def login_view(request):
+    # ✅ If user already logged in, redirect based on role
+    if request.user.is_authenticated:
+        if request.user.is_admin:
+            return redirect('admin_dashboard')
+        elif request.user.is_teacher:
+            return redirect('teacher_dashboard')
+        elif request.user.is_student:
+            return redirect('dashboard')
+
     if request.method == 'POST':
-        email = request.POST['email']
-        password = request.POST['password']
-        
-        user = authenticate(request, username=email, password=password)
+        email = request.POST.get('email')
+        password = request.POST.get('password')
+
+        # ✅ Use email (not username)
+        user = authenticate(request, email=email, password=password)
+
         if user is not None:
             login(request, user)
             messages.success(request, 'Login successful!')
-            
-            # Redirect user based on their role
+
+            # Redirect based on role
             if user.is_admin:
                 return redirect('admin_dashboard')
             elif user.is_teacher:
@@ -58,12 +64,12 @@ def login_view(request):
             elif user.is_student:
                 return redirect('dashboard')
             else:
-                messages.error(request, 'Invalid user role')
-                return redirect('index')  # Redirect to index in case of error
-            
+                messages.error(request, 'Invalid user role.')
+                return redirect('index')
         else:
-            messages.error(request, 'Invalid credentials')
-    return render(request, 'authentication/login.html')  # Render login template
+            messages.error(request, 'Invalid credentials. Please try again.')
+
+    return render(request, 'authentication/login.html')
 
 
 def forgot_password_view(request):
@@ -79,7 +85,7 @@ def forgot_password_view(request):
         else:
             messages.error(request, 'Email not found.')
     
-    return render(request, 'authentication/forgot-password.html')  # Render forgot password template
+    return render(request, 'authentication/forgot-password.html')
 
 
 def reset_password_view(request, token):
@@ -96,7 +102,7 @@ def reset_password_view(request, token):
         messages.success(request, 'Password reset successful')
         return redirect('login')
 
-    return render(request, 'authentication/reset_password.html', {'token': token})  # Render reset password template
+    return render(request, 'authentication/reset_password.html', {'token': token})
 
 
 def logout_view(request):

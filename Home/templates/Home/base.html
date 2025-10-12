@@ -4,7 +4,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=0">
-  <title>Preskool - Dashboard</title>
+  <title>Ezesha - Dashboard</title>
   <link rel="shortcut icon" href="{% static 'assets/img/favicon.png' %}">
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,500;0,600;0,700;1,400&amp;display=swap">
   <link rel="stylesheet" href="{% static 'assets/plugins/bootstrap/css/bootstrap.min.css' %}">
@@ -36,43 +36,60 @@
       <a class="mobile_btn" id="mobile_btn">
         <i class="fas fa-bars"></i>
       </a>
-      <ul class="nav user-menu">
-        <li class="nav-item dropdown has-arrow">
-          <a href="#" class="dropdown-toggle nav-link" data-toggle="dropdown">
-            <span class="user-img">
-              <img class="rounded-circle" 
-                  src="{% static 'assets/img/profiles/avatar-01.jpg' %}" 
-                  width="31" 
-                  alt="{{ request.user.username }}">
-            </span>
-          </a>
-          <div class="dropdown-menu">
-            <div class="user-header d-flex align-items-center">
-              <div class="avatar avatar-sm">
-                <img src="{% static 'assets/img/profiles/avatar-01.jpg' %}" 
-                    alt="{{ request.user.username }}" 
-                    class="avatar-img rounded-circle">
-              </div>
-              <div class="user-text ml-2">
-                <h6 class="mb-0 p-0">{{ request.user.username }}</h6>
-                <small class="text-muted mb-0 p-0">
-                  {% if request.user.is_superuser %}
-                    Administrator
-                  {% elif request.user.is_staff %}
-                    Teacher
-                  {% else %}
-                    Student
-                  {% endif %}
-                </small>
-              </div>
-            </div>
-            <a class="dropdown-item" href="profile.html">My Profile</a>
-            <a class="dropdown-item" href="inbox.html">Inbox</a>
-            <a class="dropdown-item" href="{% url 'logout' %}">Logout</a>
-          </div>
-        </li>
+  <ul class="nav user-menu">
+  <li class="nav-item dropdown has-arrow">
+    <a href="#" class="dropdown-toggle nav-link" data-toggle="dropdown">
+      <span class="user-img">
+        <img class="rounded-circle"
+            src="{% static 'assets/img/profiles/avatar-01.jpg' %}"
+            width="31"
+            alt="{% if request.user.is_authenticated %}{{ request.user.username }}{% else %}Guest{% endif %}">
+      </span>
+    </a>
 
-      </ul>
+    <div class="dropdown-menu">
+      {% if request.user.is_authenticated %}
+      <div class="user-header d-flex align-items-center">
+        <div class="avatar avatar-sm">
+          <img src="{% static 'assets/img/profiles/avatar-01.jpg' %}"
+              alt="{{ request.user.username }}"
+              class="avatar-img rounded-circle">
+        </div>
+        <div class="user-text ml-2">
+          <h6 class="mb-0 p-0">
+            {% if request.user.first_name or request.user.last_name %}
+              {{ request.user.first_name }} {{ request.user.last_name }}
+            {% else %}
+              {{ request.user.email }}
+            {% endif %}
+          </h6>
+          <small class="text-muted mb-0 p-0">
+            {% if request.user.is_superuser %}
+              Administrator
+            {% elif request.user.is_staff %}
+              Teacher
+            {% else %}
+              Student
+            {% endif %}
+          </small>
+        </div>
+      </div>
+      <a class="dropdown-item" href="profile.html">My Profile</a>
+      <a class="dropdown-item" href="inbox.html">Inbox</a>
+      <a class="dropdown-item" href="{% url 'logout' %}">Logout</a>
+      {% else %}
+      <div class="user-header d-flex align-items-center">
+        <div class="user-text ml-2">
+          <h6 class="mb-0">Guest</h6>
+          <small class="text-muted">Not logged in</small>
+        </div>
+      </div>
+      <a class="dropdown-item" href="{% url 'login' %}">Login</a>
+      {% endif %}
+    </div>
+  </li>
+</ul>
+
     </div>
     <div class="sidebar" id="sidebar">
       <div class="sidebar-inner slimscroll">
