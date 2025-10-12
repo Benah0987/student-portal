@@ -5,7 +5,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=0">
   <title>Ezesha - Dashboard</title>
-  <link rel="shortcut icon" href="{% static 'assets/img/favicon.png' %}">
+  <link rel="shortcut icon" href="{% static 'assets/img/logo1.png' %}">
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,500;0,600;0,700;1,400&amp;display=swap">
   <link rel="stylesheet" href="{% static 'assets/plugins/bootstrap/css/bootstrap.min.css' %}">
   <link rel="stylesheet" href="{% static 'assets/plugins/fontawesome/css/fontawesome.min.css' %}">
@@ -18,10 +18,10 @@
     <div class="header">
       <div class="header-left">
         <a href="index.html" class="logo">
-          <img src="assets/img/logo.png" alt="Logo">
+          <img src="assets/img/logo1.png" alt="Logo">
         </a>
         <a href="index.html" class="logo logo-small">
-          <img src="assets/img/logo-small.png" alt="Logo" width="30" height="30">
+          <img src="assets/img/logo1.png" alt="Logo" width="30" height="30">
         </a>
       </div>
       <a href="javascript:void(0);" id="toggle_btn">
@@ -51,9 +51,18 @@
       {% if request.user.is_authenticated %}
       <div class="user-header d-flex align-items-center">
         <div class="avatar avatar-sm">
+          {% if request.user.profile_image %}
+          <img src="{{ request.user.profile_image.url }}"
+              alt="{{ request.user.first_name }}"
+              class="avatar-img rounded-circle"
+              style="width: 40px; height: 40px; object-fit: cover;">
+        {% else %}
           <img src="{% static 'assets/img/profiles/avatar-01.jpg' %}"
-              alt="{{ request.user.username }}"
-              class="avatar-img rounded-circle">
+              alt="Default avatar"
+              class="avatar-img rounded-circle"
+              style="width: 40px; height: 40px; object-fit: cover;">
+        {% endif %}
+
         </div>
         <div class="user-text ml-2">
           <h6 class="mb-0 p-0">

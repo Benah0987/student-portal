@@ -74,16 +74,45 @@ def login_view(request):
 
 def forgot_password_view(request):
     if request.method == 'POST':
-        email = request.POST['email']
+        email = request.POST.get('email')
         user = CustomUser.objects.filter(email=email).first()
         
         if user:
-            token = get_random_string(32)
-            reset_request = PasswordResetRequest.objects.create(user=user, email=email, token=token)
-            reset_request.send_reset_email()
-            messages.success(request, 'Reset link sent to your email.')
+            # Generate a unique token
+            token = get_random_string(50)
+            reset_request = PasswordResetRequest.objects.create(
+                user=user,
+                email=email,
+                token=token
+            )
+
+            # Construct the reset link
+            reset_link = f"http://127.0.0.1:8000/authentication/reset-password/{token}/"
+
+            # Email content
+            subject = "Password Reset Request"
+            message = (
+                f"Hello {user.first_name or 'User'},\n\n"
+                f"We received a request to reset your password.\n"
+                f"Click the link below to reset it:\n{reset_link}\n\n"
+                f"If you didn’t request this, please ignore this email.\n\n"
+                f"Best regards,\nStudent Portal Support"
+            )
+
+            try:
+                send_mail(
+                    subject=subject,
+                    message=message,
+                    from_email=settings.EMAIL_HOST_USER,
+                    recipient_list=[email],
+                    fail_silently=False,
+                )
+                messages.success(request, "A password reset link has been sent to your email.")
+            except Exception as e:
+                print(f"Email send error: {e}")
+                messages.error(request, "There was an error sending the email. Please try again.")
         else:
-            messages.error(request, 'Email not found.')
+            messages.error(request, "No account found with that email address.")
     
     return render(request, 'authentication/forgot-password.html')
 
