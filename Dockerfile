@@ -14,7 +14,9 @@ RUN pip install --upgrade pip && pip install -r requirements.txt
 RUN pip install gunicorn
 
 # Copy project files
-COPY . .
+# Copy project files
+COPY . /app/
+
 
 # Ensure static folder exists
 RUN mkdir -p static
