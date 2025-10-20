@@ -1,4 +1,4 @@
-# Base image
+# Use a lightweight Python image
 FROM python:3.10-slim
 
 # Set environment variables
@@ -9,24 +9,19 @@ ENV PYTHONUNBUFFERED=1
 WORKDIR /app
 
 # Install dependencies
-COPY requirements.txt .
+COPY requirements.txt /app/
 RUN pip install --upgrade pip && pip install -r requirements.txt
 RUN pip install gunicorn
 
 # Copy project files
-# Copy project files
 COPY . /app/
 
-
-# Ensure static folder exists
-RUN mkdir -p static
+# Set environment variables for Django
+ENV DJANGO_SETTINGS_MODULE=Home.settings
+ENV PYTHONPATH=/app
 
 # Collect static files
-RUN python manage.py collectstatic --noinput || echo "Skipping collectstatic for now"
-
-# Expose port 8000
-EXPOSE 8000
+RUN python manage.py collectstatic --noinput
 
 # Run Gunicorn
-CMD ["gunicorn", "--bind", "0.0.0.0:8000", "student_portal.wsgi:application"]
-
+CMD ["gunicorn", "--bind", "0.0.0.0:8000", "Home.wsgi:application"]
