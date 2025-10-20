@@ -28,4 +28,5 @@ RUN python manage.py collectstatic --noinput || echo "Skipping collectstatic for
 EXPOSE 8000
 
 # Run Gunicorn
-CMD ["gunicorn", "--bind", "0.0.0.0:8000", "Home.wsgi:application"]
+CMD ["gunicorn", "--bind", "0.0.0.0:8000", "student_portal.wsgi:application"]
+
