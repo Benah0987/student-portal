@@ -5,9 +5,9 @@ from django.conf.urls.static import static
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('', include("school.urls")),
-    path('student/', include("student.urls")),
-    path('authentication/', include("home_auth.urls")),
+    path('', include("Home.school.urls")),
+    path('student/', include("Home.student.urls")),
+    path('authentication/', include("Home.home_auth.urls")),
 ]
 
 # ✅ This serves uploaded images during development

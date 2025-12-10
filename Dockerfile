@@ -5,23 +5,30 @@ FROM python:3.10-slim
 ENV PYTHONDONTWRITEBYTECODE=1
 ENV PYTHONUNBUFFERED=1
 
+# Set Django settings module (important)
+ENV DJANGO_SETTINGS_MODULE=Home.Home.settings
+
 # Set work directory
 WORKDIR /app
 
-# Install dependencies
+# Install system dependencies
+RUN apt-get update && apt-get install -y \
+    gcc \
+    postgresql-client \
+    && rm -rf /var/lib/apt/lists/*
+
+# Install Python dependencies
 COPY requirements.txt /app/
 RUN pip install --upgrade pip && pip install -r requirements.txt
-RUN pip install gunicorn
 
 # Copy project files
 COPY . /app/
 
-# Set environment variables for Django
-ENV DJANGO_SETTINGS_MODULE=Home.settings
-ENV PYTHONPATH=/app
-
 # Collect static files
 RUN python manage.py collectstatic --noinput
 
-# Run Gunicorn
-CMD ["gunicorn", "--bind", "0.0.0.0:8000", "Home.wsgi:application"]
+# Expose port
+EXPOSE 8000
+
+# Run Gunicorn with correct wsgi path
+CMD ["gunicorn", "--bind", "0.0.0.0:8000", "Home.Home.wsgi:application"]

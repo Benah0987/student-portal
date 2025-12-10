@@ -21,10 +21,11 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'school',
-    'student',
-    'home_auth',
+    'Home.school',
+    'Home.student',
+    'Home.home_auth',
 ]
+
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
@@ -37,7 +38,7 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
 
-ROOT_URLCONF = 'Home.urls'
+ROOT_URLCONF = 'Home.Home.urls'
 
 TEMPLATES = [
     {
@@ -55,7 +56,7 @@ TEMPLATES = [
     },
 ]
 
-WSGI_APPLICATION = 'Home.wsgi.application'
+WSGI_APPLICATION = 'Home.Home.wsgi.application'
 
 
 # Database (SQLite for local, PostgreSQL for Docker)
