@@ -73,7 +73,7 @@ def add_student(request):
             student_image=student_image,
             parent=parent
         )
-        create_notification(request.user, f"Added Student Succesfully: {student.first_name} {student.last_name}")
+        # Notification creation removed (create_notification not defined in this module)
 
         messages.success(request, "Student and parent info saved successfully!")
         return redirect('student_list')

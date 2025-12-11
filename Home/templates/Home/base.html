@@ -18,10 +18,10 @@
     <div class="header">
       <div class="header-left">
         <a href="index.html" class="logo">
-          <img src="assets/img/logo1.png" alt="Logo">
+          <img src="{% static 'assets/img/logo1.png' %}" alt="Logo" style="width:140px; height:auto;">
         </a>
         <a href="index.html" class="logo logo-small">
-          <img src="assets/img/logo1.png" alt="Logo" width="30" height="30">
+          <img src="{% static 'assets/img/logo1.png' %}" alt="Logo" style="width:48px; height:48px;">
         </a>
       </div>
       <a href="javascript:void(0);" id="toggle_btn">
@@ -40,10 +40,22 @@
   <li class="nav-item dropdown has-arrow">
     <a href="#" class="dropdown-toggle nav-link" data-toggle="dropdown">
       <span class="user-img">
-        <img class="rounded-circle"
-            src="{% static 'assets/img/profiles/avatar-01.jpg' %}"
-            width="31"
-            alt="{% if request.user.is_authenticated %}{{ request.user.username }}{% else %}Guest{% endif %}">
+        {% if request.user.is_authenticated and request.user.profile_image %}
+          <img class="rounded-circle"
+               src="{{ request.user.profile_image.url }}"
+               width="31"
+               alt="{{ request.user.username }}">
+        {% elif request.user.is_authenticated %}
+          <img class="rounded-circle"
+               src="{% static 'assets/img/profiles/avatar-01.jpg' %}"
+               width="31"
+               alt="{{ request.user.username }}">
+        {% else %}
+          <img class="rounded-circle"
+               src="{% static 'assets/img/profiles/avatar-01.jpg' %}"
+               width="31"
+               alt="Guest">
+        {% endif %}
       </span>
     </a>
 
@@ -119,9 +131,9 @@
               <a href="#"><i class="fas fa-user-graduate"></i> <span> Students</span> <span class="menu-arrow"></span></a>
               <ul>
                 <li><a href="{% url 'student_list' %}">Student List</a></li>
-                <li><a href="student-details.html">Student View</a></li>
+                <li><a href="{% url 'student_list' %}">Student View</a></li>
                 <li><a href="{% url 'add_student' %}">Student Add</a></li>
-                <li><a href="edit-student.html">Student Edit</a></li>
+                <li><a href="{% url 'student_list' %}">Student Edit</a></li>
               </ul>
             </li>
             <li class="submenu">

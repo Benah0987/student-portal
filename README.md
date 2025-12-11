@@ -108,33 +108,8 @@ Troubleshooting & notes
 - For production, run `python manage.py collectstatic --noinput` and configure a proper WSGI server.
 - To use PostgreSQL via Docker, set `DB_ENGINE=postgres`, run your database container (for example `docker-compose up -d`), then run migrations.
 
-LinkedIn Post (Ready to publish)
---------------------------------
-I'm excited to share "Student Portal" — a Django-based student management app I built to simplify school workflows.
 
-Highlights:
-- Custom user authentication & role-ready architecture
-- Modular apps for students and schools
-- Environment-driven settings (works with SQLite locally, Postgres in Docker/production)
-- Static + media handling with WhiteNoise for easy deployment
 
-Try it locally:
 
-```bash
-source Home/env/bin/activate
-pip install -r requirements.txt
-python manage.py migrate && python manage.py runserver 0.0.0.0:8000
-```
-
-Repository & demo: <link-to-repo-or-demo>
-
-Feedback, suggestions, or contributions welcome — DM or open a PR!  
-#Django #Python #WebDevelopment #OpenSource #EdTech
-
-—
-If you'd like, I can also:
-- add a `.env.example` file to the repo,
-- create a short `RUNNING.md` with troubleshooting screenshots, or
-- open a commit/PR with these changes.
 
 Files updated: `README.md`
