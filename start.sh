@@ -1,3 +1,5 @@
+echo "Starting startup script: running migrations and collectstatic if needed..."
+echo "Starting Gunicorn..."
 #!/usr/bin/env bash
 set -e
 
@@ -8,20 +10,8 @@ echo "Collecting static files..."
 python manage.py collectstatic --noinput
 
 echo "Starting Gunicorn..."
-exec gunicorn Home.wsgi:application --bind 0.0.0.0:${PORT:-8000} --workers ${WEB_CONCURRENCY:-1}
-#!/usr/bin/env bash
-set -e
 
-echo "Starting startup script: running migrations and collectstatic if needed..."
-
-# Activate virtualenv if present (Render uses a venv automatically when building)
-# Run migrations and collectstatic (idempotent)
-python manage.py migrate --noinput
-python manage.py collectstatic --noinput
-
-echo "Starting Gunicorn..."
-
-# Use WEB_CONCURRENCY if set, otherwise default to 1
+# Default to 1 worker if WEB_CONCURRENCY is not set
 : ${WEB_CONCURRENCY:=1}
 
 exec gunicorn Home.wsgi:application --bind 0.0.0.0:${PORT:-8000} --workers=${WEB_CONCURRENCY}
